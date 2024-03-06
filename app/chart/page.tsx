@@ -2,7 +2,7 @@
 
 import MermaidDiagram from '../components/MermaidDiagram'
 import ERDEditorForm from '../components/ERDEditorForm'
-import { useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 const hierarchyFlowchart = `
   erDiagram
@@ -29,6 +29,9 @@ const hierarchyFlowchart = `
   Orders ||--o{ Products : "contains"
 `
 
+const defaultContextValue = {}
+const AppContext = createContext(defaultContextValue)
+
 const HomePage = () => {
   const [chart, setChart] = useState(hierarchyFlowchart)
 
@@ -37,15 +40,19 @@ const HomePage = () => {
     // Here, you can update the chart state based on form input if needed
   }
 
+  const contextValue = { ...defaultContextValue, theme: 'light' }
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div style={{ width: '75%' }}>
-        <MermaidDiagram chart={chart} />
+    <AppContext.Provider value={contextValue}>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ width: '60%' }}>
+          <MermaidDiagram chart={chart} />
+        </div>
+        <div style={{ width: '40%' }}>
+          <ERDEditorForm onSubmit={handleFormSubmit} />
+        </div>
       </div>
-      <div style={{ width: '25%' }}>
-        <ERDEditorForm onSubmit={handleFormSubmit} />
-      </div>
-    </div>
+    </AppContext.Provider>
   )
 }
 

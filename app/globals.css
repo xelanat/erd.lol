@@ -8,14 +8,6 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -28,4 +20,26 @@ body {
 
 .mermaid {
   height: 100vh;
+}
+
+.new-table, .new-column {
+  display: block;
+}
+
+.new-column {
+  width: 100%;
+}
+
+.table-form-group {
+  display: flex;
+}
+
+.table-form-group-fields {
+  margin: 1rem;
+  border: 1px solid white;
+}
+
+.column-form-group {
+  display: flex;
+  /* grid-template-columns: repeat(3, 2fr); */
 }
