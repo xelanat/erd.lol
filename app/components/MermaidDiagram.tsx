@@ -13,14 +13,16 @@ const MermaidDiagram = ({ chart }: MermaidDiagramProps) => {
       startOnLoad: true,
       securityLevel: 'loose',
       theme: 'default',
-    });
+    })
     if (mermaidRef.current) {
-      mermaid.contentLoaded();
-      mermaid.init(undefined, mermaidRef.current);
+      // Trick the mermaid component into re-rendering
+      mermaidRef.current.removeAttribute("data-processed")
+      mermaid.contentLoaded()
+      mermaid.init(undefined, mermaidRef.current)
     }
   }, [chart]);
 
-  return <div ref={mermaidRef} className="mermaid">{chart}</div>;
+  return chart ? <div ref={mermaidRef} className="mermaid">{chart}</div> : <div className="mermaid" />
 };
 
 export default MermaidDiagram;

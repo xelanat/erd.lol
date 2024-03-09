@@ -1,5 +1,6 @@
-import React, { FormEvent } from 'react'
-import { Form, Field, FormRenderProps } from 'react-final-form'
+import { filter, isEmpty, map } from 'lodash'
+import React from 'react'
+import { Form, Field, FormSpy } from 'react-final-form'
 import { FieldArray } from 'react-final-form-arrays'
 import arrayMutators from 'final-form-arrays'
 
@@ -9,10 +10,11 @@ import arrayMutators from 'final-form-arrays'
 // }
 
 interface ERDEditorFormProps {
-  onSubmit: (data: any) => null
+  onChange: (data: any) => void
+  onSubmit: (data: any) => void
 }
 
-const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onSubmit }) => {
+const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => {
 
   // const validate = (values: FormData) => {
   //   const errors: Partial<FormData> = {}
@@ -27,6 +29,34 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onSubmit }) => {
   //   return errors
   // }
 
+  const toMermaid = (values: any) => {
+    const defaultMessage = 'your table here 😊'
+    const title = isEmpty(values) ? defaultMessage : values.title
+    // Define diagram title and type
+    const header = `---\ntitle: ${title}\n---\nerDiagram\n`
+
+    // Write tables
+    const { tables, relationships } = values
+    const tablesBody = map(tables, (table: any) => (
+      `${table.name} { ` + map(table.columns, (column: any) => (
+        filter([column.type, column.name, column.keyType], (item: any) => item).join(' ')
+      )).join(' ') + ' }'
+    )).join(' ')
+
+    // Write relationships
+    // const relationshipsBody = map(relationships, rel: any => `    ${rel.source} ${rel.relationshipType} ${rel.target} : ${rel.description}`).join('\n');
+    // erdSyntax += relationshipsString;
+
+    console.log(`${header} ${tablesBody}`.trim())
+    return `${header} ${tablesBody}`.trim()
+  }
+  
+
+  const onFormChange = (data: any) => {
+    const { values } = data
+    onChange(toMermaid(values))
+  }
+
   return (
     <Form
       onSubmit={() => {}}
@@ -36,7 +66,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onSubmit }) => {
       // validate={validate}
       render={({ handleSubmit, form, submitting, pristine, values }) => (
         <form className="border-solid border-2 border-white-100" onSubmit={handleSubmit}>
-          <Field name="diagram">
+          <Field name="title">
             {({ input, meta }) => (
               <div>
                 <input {...input} type="text" placeholder="Diagram Name" />
@@ -48,8 +78,8 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onSubmit }) => {
             {({ fields }) => (
               <>
                 {fields.map((name, index) => (
-                  <div className="table-form-group">
-                    <div key={name} className="table-form-group-fields">
+                  <div key={name} className="table-form-group">
+                    <div className="table-form-group-fields">
                       <Field name={`${name}.name`} component="input" placeholder="Table Name" />
                       <FieldArray name={`tables[${index}].columns`}>
                         {({ fields }) => (
@@ -90,6 +120,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onSubmit }) => {
               </>
             )}
           </FieldArray>
+          <FormSpy onChange={onFormChange} />
           <div className="buttons">
             <button
               className="px-4 py-2 border border-neutral-300 bg-neutral-100 text-neutral-500 text-sm hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
