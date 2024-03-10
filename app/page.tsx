@@ -15,7 +15,7 @@ const LandingPage = () => (
         <div className="mb-4 text-black font-bold">Built on MermaidJS.</div>
         <Link
           className="bg-black p-2 rounded text-white transition duration-200 border-2 hover:border-black hover:border-dotted hover:bg-white hover:text-black font-bold"
-          href="./chart"
+          href="./make"
         >
           Diagram Away 🪄
         </Link>
