@@ -4,8 +4,8 @@
 
 ### Feature Roadmap
 
-- [x] (March 9th, 2024) **Reactive form**: Dead-simple editor built to support any reasonable number of tables, columns, and relationships.
-- [x] (March 9th, 2024) **Preview**: Every keystroke updates the Mermaid live preview.
+- [x] **Reactive form**: Dead-simple editor built to support any reasonable number of tables, columns, and relationships. (March 9th, 2024)
+- [x] **Preview**: Every keystroke updates the Mermaid live preview. (March 9th, 2024)
 - [ ] **Color and formatting**: Enable style editing.
 - [ ] **Export Mermaid syntax**: Copy the Mermaid syntax for usage within documents and integrations.
 - [ ] **Export**: Export your diagrams to PNG and PDF for presentations and documents.
@@ -16,7 +16,7 @@
 
 ### Potential Downsides
 
-MermaidJS can struggle with making palatable ER diagrams when the number of tables and relationships is high. This is arbitrary (what's "high") and subjective (what's "palatable"), but keep in mind that large databases may look chaotic.
+Mermaid can struggle with making palatable ER diagrams when the number of tables and relationships is high. This is arbitrary (what's "high") and subjective (what's "palatable"). But keep in mind that using Mermaid's layout algorithm comes with the drawback that you cannot manually arrange entities.
 
 ### Support
 
