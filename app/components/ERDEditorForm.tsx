@@ -102,8 +102,8 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
           <Field name="title">
             {({ input, meta }) => (
               <div>
-                <input {...input} className="p-2" type="text" placeholder="Diagram Name" />
-                {meta.error && <span className="text-sm text-purple-500">{meta.error}</span>}
+                <input {...input} className="w-full p-2 hover:border-gray-400 hover:border-solid border-2 border-transparent" type="text" placeholder="Diagram Name" />
+                {meta.error && <span className="text-xs text-purple-500">{meta.error}</span>}
               </div>
             )}
           </Field>
@@ -115,9 +115,10 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                     <div>
                       <Field name={`${name}.name`} component="input" placeholder="Table Name">
                         {({ input, meta }) => (
-                          <div>
-                            <input {...input} className="w-full p-1" type="text" placeholder="Table Name" />
-                            {meta.error && <span className="text-sm text-red-500">{meta.error}</span>}
+                          <div className="hover:border-gray-400 hover:border-solid border-2">
+                            <input {...input} className="w-full p-1 " type="text" placeholder="Table Name" />
+                            <div className="bg-white text-xs text-gray-400">Table Name</div>
+                            {meta.error && <span className="text-xs text-red-500">{meta.error}</span>}
                           </div>
                         )}
                       </Field>
@@ -127,15 +128,36 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                             {fields.map((name, index) => (
                               <>
                                 <div key={name} className="flex">
-                                  <Field className="flex-1" name={`${name}.type`} component="input" placeholder="Type" />
-                                  <Field className="flex-1" name={`${name}.name`} component="input" placeholder="Name" />
-                                  <Field className="flex-1" name={`${name}.keyType`} component="select">
-                                      <option value="">🔑</option>
-                                      <option value="PK">🔑 PK</option>
-                                      <option value="FK">🔑 FK</option>
+                                  <Field className="flex-1 hover:border-gray-400 hover:border-solid border-2" name={`${name}.type`} component="input" placeholder="Type">
+                                    {({ input }) => (
+                                      <div className="hover:border-gray-400 hover:border-solid border-2">
+                                        <input {...input} placeholder="Type" />
+                                        <div className="bg-white text-xs text-gray-400">Column Type</div>
+                                      </div>
+                                    )}
+                                  </Field>
+                                  <Field className="flex-1 hover:border-gray-400 hover:border-solid border-2" name={`${name}.name`} component="input" placeholder="Name">
+                                    {({ input }) => (
+                                      <div className="hover:border-gray-400 hover:border-solid border-2">
+                                        <input {...input} placeholder="Name" />
+                                        <div className="bg-white text-xs text-gray-400">Column Name</div>
+                                      </div>
+                                    )}
+                                  </Field>
+                                  <Field className="flex-1 hover:border-gray-400 hover:border-solid border-2" name={`${name}.keyType`} component="select">
+                                    {({ input }) => (
+                                      <div className="hover:border-gray-400 hover:border-solid border-2">
+                                        <select {...input}>
+                                          <option value=""></option>
+                                          <option value="PK">PK</option>
+                                          <option value="FK">FK</option>
+                                        </select>
+                                        <div className="bg-white text-xs text-gray-400">Key</div>
+                                      </div>
+                                    )}
                                   </Field>
                                   <button
-                                    className="flex-initial p-2 font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                                    className="flex-initial p-2 font-bold transition duration-200 hover:bg-white hover:text-black"
                                     type="button"
                                     onClick={() => fields.remove(index)}
                                   >
@@ -143,12 +165,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                   </button>
                                 </div>
                                 <div>
-                                  {get(meta.error, index) && map(meta.error[index], (error, key) => <div key={key} className="text-sm text-red-500">{error}</div>)}
+                                  {get(meta.error, index) && map(meta.error[index], (error, key) => <div key={key} className="text-xs text-red-500">{error}</div>)}
                                 </div>
                               </>
                             ))}
                             <button
-                              className="w-full p-2 font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                              className="w-full p-2 font-bold transition duration-200 hover:bg-white hover:text-black"
                               type="button"
                               onClick={() => fields.push({ name: '', type: '' })}
                             >
@@ -159,7 +181,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                       </FieldArray>
                     </div>
                     <button
-                      className="p-4 font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                      className="p-4 font-bold transition duration-200 hover:bg-white hover:text-black"
                       type="button"
                       onClick={() => fields.remove(index)}
                     >
@@ -168,7 +190,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                   </div>
                 ))}
                 <button
-                  className="w-full p-2 font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                  className="w-full p-2 font-bold transition duration-200 hover:bg-white hover:text-black"
                   type="button"
                   onClick={() => fields.push({ name: '', columns: [] })}
                 >
@@ -180,7 +202,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
           <FormSpy onChange={onFormChange} />
           <div className="my-2">
             <button
-              className="px-4 py-2 border border-neutral-300 bg-neutral-100 text-neutral-500 text-sm hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+              className="px-4 py-2 border border-neutral-300 bg-neutral-100 text-neutral-500 text-xs hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
               disabled={submitting}
               onClick={form.submit}
               type="button"
@@ -188,7 +210,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
               Save
             </button>
             <button
-              className="px-4 py-2 ml-2 border border-neutral-300 bg-neutral-100 text-neutral-500 text-sm hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
+              className="px-4 py-2 ml-2 border border-neutral-300 bg-neutral-100 text-neutral-500 text-xs hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
               disabled={submitting || pristine}
               onClick={() => form.reset()}
               type="button"

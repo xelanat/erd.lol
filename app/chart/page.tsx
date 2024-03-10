@@ -38,12 +38,11 @@ const HomePage = () => {
   return (
     <AppContext.Provider value={contextValue}>
       <div className="flex">
-        <div style={{ width: `${leftWidth}%` }}>
-          
+        <div className="left-panel" style={{ width: `${leftWidth}%` }}>
           <MermaidDiagram chart={chart} />
         </div>
-        <div className="w-1 bg-gray-400 cursor-col-resize" onMouseDown={(event) => handleMouseDown(event)} />
-        <div style={{ width: `${100 - leftWidth}%` }}>
+        <div className="w-1 bg-gray-200 cursor-col-resize" onMouseDown={(event) => handleMouseDown(event)} />
+        <div className="right-panel" style={{ width: `${100 - leftWidth}%` }}>
           <ERDEditorForm onChange={handleFormChange} onSubmit={handleFormSubmit} />
         </div>
       </div>
