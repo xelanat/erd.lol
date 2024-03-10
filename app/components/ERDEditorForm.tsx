@@ -1,20 +1,25 @@
-import {
-  filter,
-  forEach,
-  get,
-  includes,
-  isEmpty,
-  map,
-  set,
-} from 'lodash'
+import arrayMutators from 'final-form-arrays'
+import { filter, forEach, get, includes, isEmpty, map, set } from 'lodash'
 import React from 'react'
 import { Form, Field, FormSpy } from 'react-final-form'
 import { FieldArray } from 'react-final-form-arrays'
-import arrayMutators from 'final-form-arrays'
+import { adjectives, animals, colors, Config, uniqueNamesGenerator } from 'unique-names-generator'
 
+const config: Config = {
+  dictionaries: [adjectives, colors, animals],
+  separator: '-',
+  seed: `mermaid diagrams are quite awesome ${Date.now()}`,
+}
 
 const XIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-6 h-6"
+  >
     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
   </svg>
 )
@@ -31,7 +36,6 @@ interface ERDEditorFormProps {
 }
 
 const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => {
-
   const validate = (values: FormData) => {
     const errors: Partial<FormData> = {}
     const { tables, title, relationships } = values
@@ -70,30 +74,36 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
     const defaultMessage = 'your table here 😊'
     const title = isEmpty(values) ? defaultMessage : values.title
     // Define diagram title and type
-    const titleHeader = title ? `---\ntitle: ${title}\n---\n`: ''
+    const titleHeader = title ? `---\ntitle: ${title}\n---\n` : ''
     const header = `${titleHeader}erDiagram\n`
 
     // Write tables
     const { tables, relationships } = values
-    const tablesBody = map(tables, (table: any) => (
-      `${table.name} { ` + map(table.columns, (column: any) => (
-        filter([column.type, column.name, column.keyType], (item: any) => item).join(' ')
-      )).join(' ') + ' }'
-    )).join(' ')
+    const tablesBody = map(
+      tables,
+      (table: any) =>
+        `${table.name} { ` +
+        map(table.columns, (column: any) =>
+          filter([column.type, column.name, column.keyType], (item: any) => item).join(' ')
+        ).join(' ') +
+        ' }'
+    ).join(' ')
     return `${header} ${tablesBody}`.trim()
   }
-  
 
   const onFormChange = (data: any) => {
     const { errors, values } = data
-    // console.log(data)
     if (isEmpty(errors)) {
       onChange(toMermaid(values))
     }
   }
 
+  // Initial form values for react-final-form
+  const initialValues = { title: uniqueNamesGenerator(config) }
+
   return (
     <Form
+      initialValues={initialValues}
       onSubmit={() => {}}
       mutators={{ ...arrayMutators }}
       validate={validate}
@@ -102,7 +112,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
           <Field name="title">
             {({ input, meta }) => (
               <div>
-                <input {...input} className="w-full p-2 hover:border-gray-400 hover:border-solid border-2 border-transparent" type="text" placeholder="Diagram Name" />
+                <input
+                  {...input}
+                  className="w-full p-2 hover:border-gray-400 hover:border-solid border-2 border-transparent"
+                  type="text"
+                  placeholder="Diagram Name"
+                />
                 {meta.error && <span className="text-xs text-purple-500">{meta.error}</span>}
               </div>
             )}
@@ -128,7 +143,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                             {fields.map((name, index) => (
                               <>
                                 <div key={name} className="flex">
-                                  <Field className="flex-1 hover:border-gray-400 hover:border-solid border-2" name={`${name}.type`} component="input" placeholder="Type">
+                                  <Field
+                                    className="flex-1 hover:border-gray-400 hover:border-solid border-2"
+                                    name={`${name}.type`}
+                                    component="input"
+                                    placeholder="Type"
+                                  >
                                     {({ input }) => (
                                       <div className="hover:border-gray-400 hover:border-solid border-2">
                                         <input {...input} placeholder="Type" />
@@ -136,7 +156,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                       </div>
                                     )}
                                   </Field>
-                                  <Field className="flex-1 hover:border-gray-400 hover:border-solid border-2" name={`${name}.name`} component="input" placeholder="Name">
+                                  <Field
+                                    className="flex-1 hover:border-gray-400 hover:border-solid border-2"
+                                    name={`${name}.name`}
+                                    component="input"
+                                    placeholder="Name"
+                                  >
                                     {({ input }) => (
                                       <div className="hover:border-gray-400 hover:border-solid border-2">
                                         <input {...input} placeholder="Name" />
@@ -144,7 +169,11 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                       </div>
                                     )}
                                   </Field>
-                                  <Field className="flex-1 hover:border-gray-400 hover:border-solid border-2" name={`${name}.keyType`} component="select">
+                                  <Field
+                                    className="flex-1 hover:border-gray-400 hover:border-solid border-2"
+                                    name={`${name}.keyType`}
+                                    component="select"
+                                  >
                                     {({ input }) => (
                                       <div className="hover:border-gray-400 hover:border-solid border-2">
                                         <select {...input}>
@@ -165,7 +194,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                   </button>
                                 </div>
                                 <div>
-                                  {get(meta.error, index) && map(meta.error[index], (error, key) => <div key={key} className="text-xs text-red-500">{error}</div>)}
+                                  {get(meta.error, index) &&
+                                    map(meta.error[index], (error, key) => (
+                                      <div key={key} className="text-xs text-red-500">
+                                        {error}
+                                      </div>
+                                    ))}
                                 </div>
                               </>
                             ))}

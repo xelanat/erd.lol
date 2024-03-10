@@ -1,12 +1,12 @@
-import { useEffect, useRef } from 'react';
-import mermaid from 'mermaid';
+import { useEffect, useRef } from 'react'
+import mermaid from 'mermaid'
 
 interface MermaidDiagramProps {
-  chart: string;
+  chart: string
 }
 
 const MermaidDiagram = ({ chart }: MermaidDiagramProps) => {
-  const mermaidRef = useRef<HTMLDivElement>(null);
+  const mermaidRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     mermaid.initialize({
@@ -16,13 +16,19 @@ const MermaidDiagram = ({ chart }: MermaidDiagramProps) => {
     })
     if (mermaidRef.current) {
       // Trick the mermaid component into re-rendering
-      mermaidRef.current.removeAttribute("data-processed")
+      mermaidRef.current.removeAttribute('data-processed')
       mermaid.contentLoaded()
       mermaid.init(undefined, mermaidRef.current)
     }
-  }, [chart]);
+  }, [chart])
 
-  return chart ? <div ref={mermaidRef} className="mermaid">{chart}</div> : <div className="mermaid" />
-};
+  return chart ? (
+    <div ref={mermaidRef} className="mermaid">
+      {chart}
+    </div>
+  ) : (
+    <div className="mermaid" />
+  )
+}
 
-export default MermaidDiagram;
+export default MermaidDiagram

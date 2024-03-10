@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import MermaidDiagram from '../components/MermaidDiagram'
 import ERDEditorForm from '../components/ERDEditorForm'
