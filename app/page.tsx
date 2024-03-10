@@ -5,7 +5,7 @@ const LandingPage = () => (
   <div>
     <Head>
       <title>MermaidJS Diagram Tool</title>
-      <link rel="icon" href="/favicon.ico" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
     </Head>
 
     <main className="patterned-background h-screen">

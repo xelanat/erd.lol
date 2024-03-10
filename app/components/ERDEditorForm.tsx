@@ -111,14 +111,32 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
         <form className="p-5 overflow-x-auto" onSubmit={handleSubmit}>
           <Field name="title">
             {({ input, meta }) => (
-              <div>
-                <input
-                  {...input}
-                  className="w-full p-2 hover:border-gray-400 hover:border-solid border-2 border-transparent"
-                  type="text"
-                  placeholder="Diagram Name"
-                />
-                {meta.error && <span className="text-xs text-purple-500">{meta.error}</span>}
+              <div className="flex justify-start my-2">
+                <div>
+                  <input
+                    {...input}
+                    className="w-full p-2 font-bold hover:border-gray-400 hover:border-solid border-2 border-transparent"
+                    type="text"
+                    placeholder="Diagram Name"
+                  />
+                  {meta.error && <span className="text-xs text-purple-500">{meta.error}</span>}
+                </div>
+                <button
+                  className="px-4 p-2 ml-2 bg-neutral-100 text-black-500 text-xs cursor-pointer hover:-translate-y-1 transform transition duration-200 hover:shadow-sm"
+                  disabled={submitting}
+                  onClick={form.submit}
+                  type="button"
+                >
+                  Save
+                </button>
+                <button
+                  className="p-2 ml-2 bg-neutral-100 text-black-500 text-xs cursor-pointer hover:-translate-y-1 transform transition duration-200 hover:shadow-sm"
+                  disabled={submitting || pristine}
+                  onClick={() => form.reset()}
+                  type="button"
+                >
+                  Reset
+                </button>
               </div>
             )}
           </Field>
@@ -131,9 +149,9 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                       <Field name={`${name}.name`} component="input" placeholder="Table Name">
                         {({ input, meta }) => (
                           <div className="hover:border-gray-400 hover:border-solid border-2">
-                            <input {...input} className="w-full p-1 " type="text" placeholder="Table Name" />
-                            <div className="bg-white text-xs text-gray-400">Table Name</div>
-                            {meta.error && <span className="text-xs text-red-500">{meta.error}</span>}
+                            <input {...input} className="w-full p-1 font-bold" type="text" placeholder="Table Name" />
+                            {!input.value && <div className="bg-white text-xs text-gray-400">Table Name</div>}
+                            {meta.error && <span className={`text-xs text-purple-500`}>{meta.error}</span>}
                           </div>
                         )}
                       </Field>
@@ -152,7 +170,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                     {({ input }) => (
                                       <div className="hover:border-gray-400 hover:border-solid border-2">
                                         <input {...input} placeholder="Type" />
-                                        <div className="bg-white text-xs text-gray-400">Column Type</div>
+                                        {<div className="bg-white text-xs text-gray-400">Column Type</div>}
                                       </div>
                                     )}
                                   </Field>
@@ -186,7 +204,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                     )}
                                   </Field>
                                   <button
-                                    className="flex-initial p-2 font-bold transition duration-200 hover:bg-white hover:text-black"
+                                    className="flex-initial p-2 transition duration-200 hover:bg-white hover:text-black hover:rounded"
                                     type="button"
                                     onClick={() => fields.remove(index)}
                                   >
@@ -194,9 +212,9 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                   </button>
                                 </div>
                                 <div>
-                                  {get(meta.error, index) &&
+                                  {get(meta.error, index) && 
                                     map(meta.error[index], (error, key) => (
-                                      <div key={key} className="text-xs text-red-500">
+                                      <div key={key} className={`text-xs text-purple-500`}>
                                         {error}
                                       </div>
                                     ))}
@@ -204,7 +222,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                               </>
                             ))}
                             <button
-                              className="w-full p-2 font-bold transition duration-200 hover:bg-white hover:text-black"
+                              className="w-full p-2 font-bold text-xs text-gray-500 transition duration-200 hover:bg-white hover:text-black hover:rounded"
                               type="button"
                               onClick={() => fields.push({ name: '', type: '' })}
                             >
@@ -215,7 +233,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                       </FieldArray>
                     </div>
                     <button
-                      className="p-4 font-bold transition duration-200 hover:bg-white hover:text-black"
+                      className="p-4 text-xs transition duration-200 hover:bg-white hover:text-black hover:rounded"
                       type="button"
                       onClick={() => fields.remove(index)}
                     >
@@ -224,7 +242,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                   </div>
                 ))}
                 <button
-                  className="w-full p-2 font-bold transition duration-200 hover:bg-white hover:text-black"
+                  className="w-full p-2 font-bold text-xs text-gray-500 transition duration-200 hover:bg-white hover:text-black hover:rounded"
                   type="button"
                   onClick={() => fields.push({ name: '', columns: [] })}
                 >
@@ -234,24 +252,6 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
             )}
           </FieldArray>
           <FormSpy onChange={onFormChange} />
-          <div className="my-2">
-            <button
-              className="px-4 py-2 border border-neutral-300 bg-neutral-100 text-neutral-500 text-xs hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-              disabled={submitting}
-              onClick={form.submit}
-              type="button"
-            >
-              Save
-            </button>
-            <button
-              className="px-4 py-2 ml-2 border border-neutral-300 bg-neutral-100 text-neutral-500 text-xs hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
-              disabled={submitting || pristine}
-              onClick={() => form.reset()}
-              type="button"
-            >
-              Reset
-            </button>
-          </div>
         </form>
       )}
     />
