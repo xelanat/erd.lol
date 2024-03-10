@@ -51,15 +51,6 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
         }
       })
     })
-    // if (!values.name) {
-    //   errors.name = 'Required'
-    // }
-    // if (!values.age) {
-    //   errors.age = 'Required'
-    // } else if (values.age < 18) {
-    //   errors.age = 'Must be at least 18'
-    // }
-    console.log(errors)
     return errors
   }
 
@@ -77,12 +68,6 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
         filter([column.type, column.name, column.keyType], (item: any) => item).join(' ')
       )).join(' ') + ' }'
     )).join(' ')
-
-    // Write relationships
-    // const relationshipsBody = map(relationships, rel: any => `    ${rel.source} ${rel.relationshipType} ${rel.target} : ${rel.description}`).join('\n');
-    // erdSyntax += relationshipsString;
-
-    // console.log(`${header} ${tablesBody}`.trim())
     return `${header} ${tablesBody}`.trim()
   }
   
@@ -101,7 +86,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
       mutators={{ ...arrayMutators }}
       validate={validate}
       render={({ handleSubmit, form, submitting, pristine, values }) => (
-        <form className="border-solid border-2 border-white-100" onSubmit={handleSubmit}>
+        <form className="border-solid border-white-100 p-5" onSubmit={handleSubmit}>
           <Field name="title">
             {({ input, meta }) => (
               <div>
@@ -119,49 +104,39 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                       <Field name={`${name}.name`} component="input" placeholder="Table Name">
                         {({ input, meta }) => (
                           <div>
-                            <input {...input} type="text" placeholder="Table Name" />
+                            <input {...input} className="w-full" type="text" placeholder="Table Name" />
                             {meta.error && meta.touched && <span className="text-red-500">{meta.error}</span>}
                           </div>
                         )}
                       </Field>
                       <FieldArray name={`tables[${index}].columns`}>
-                        {({ fields }) => (
+                        {({ fields, meta }) => (
                           <>
                             {fields.map((name, index) => (
-                              <div key={name} className="column-form-group">
-                                <Field name={`${name}.name`} component="input" placeholder="Name">
-                                  {({ input, meta }) => (
-                                    <div>
-                                      <input {...input} type="text" placeholder="Name" />
-                                      {meta.error && meta.touched && <span className="text-red-500">{meta.error}</span>}
-                                    </div>
-                                  )}
-                                </Field>
-                                <Field name={`${name}.type`} component="input" placeholder="Type">
-                                  {({ input, meta }) => (
-                                    <div>
-                                      <input {...input} type="text" placeholder="Type" />
-                                      {meta.error && meta.touched && <span className="text-red-500">{meta.error}</span>}
-                                    </div>
-                                  )}
-                                </Field>
-                                <Field name={`${name}.keyType`} component="select">
-                                  {({ input, meta }) => (
-                                    <div>
-                                      <select { ...input }>
-                                        <option value="">🔑</option>
-                                        <option value="PK">🔑 PK</option>
-                                        <option value="FK">🔑 FK</option>
-                                      </select>
-                                      {meta.error && meta.touched && <span className="text-red-500">{meta.error}</span>}
-                                    </div>
-                                  )}
-                                </Field>
-                                <button onClick={() => fields.remove(index)}>x</button>
-                              </div>
+                              <>
+                                <div key={name} className="column-form-group">
+                                  <Field name={`${name}.type`} component="input" placeholder="Type" />
+                                  <Field name={`${name}.name`} component="input" placeholder="Name" />
+                                  <Field name={`${name}.keyType`} component="select">
+                                      <option value="">🔑</option>
+                                      <option value="PK">🔑 PK</option>
+                                      <option value="FK">🔑 FK</option>
+                                  </Field>
+                                  <button
+                                    className="d-block px-8 py-2 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                                    type="button"
+                                    onClick={() => fields.remove(index)}
+                                  >
+                                    x
+                                  </button>
+                                </div>
+                                <div>
+                                  {meta.error && map(meta.error[index], (error, key) => <div key={key} className="text-red-500">{error}</div>)}
+                                </div>
+                              </>
                             ))}
                             <button
-                              className="d-block px-8 py-2 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                              className="d-block w-full px-8 py-2 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
                               type="button"
                               onClick={() => fields.push({ name: '', type: '' })}
                             >
@@ -171,11 +146,17 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                         )}
                       </FieldArray>
                     </div>
-                    <button onClick={() => fields.remove(index)}>x</button>
+                    <button
+                      className="d-block px-8 py-2 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                      type="button"
+                      onClick={() => fields.remove(index)}
+                    >
+                      x
+                    </button>
                   </div>
                 ))}
                 <button
-                  className="d-block px-8 py-2 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                  className="d-block px-8 py-2 text-grey font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
                   type="button"
                   onClick={() => fields.push({ name: '', columns: [] })}
                 >
