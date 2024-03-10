@@ -9,7 +9,7 @@ const AppContext = createContext(defaultContextValue)
 
 const HomePage = () => {
   const [chart, setChart] = useState('')
-  const [leftWidth, setLeftWidth] = useState(50)
+  const [leftWidth, setLeftWidth] = useState(60)
 
   const handleFormChange = (erdFromFormData: any) => setChart(erdFromFormData)
 

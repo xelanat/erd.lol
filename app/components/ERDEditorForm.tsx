@@ -24,6 +24,12 @@ const XIcon = () => (
   </svg>
 )
 
+const SaveIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 inline">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
+  </svg>
+)
+
 interface FormData {
   tables: Array<any>
   title: string
@@ -108,7 +114,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
       mutators={{ ...arrayMutators }}
       validate={validate}
       render={({ handleSubmit, form, submitting, pristine, values }) => (
-        <form className="p-5 overflow-x-auto" onSubmit={handleSubmit}>
+        <form className="px-2 py-4 overflow-x-auto" onSubmit={handleSubmit}>
           <Field name="title">
             {({ input, meta }) => (
               <div className="flex justify-start my-2">
@@ -122,15 +128,15 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                   {meta.error && <span className="text-xs text-purple-500">⚠️&nbsp;{meta.error}</span>}
                 </div>
                 <button
-                  className="px-4 p-2 ml-2 bg-neutral-100 text-black-500 text-xs cursor-pointer transform transition duration-200 hover:-translate-y-1 hover:shadow-sm hover:rounded"
+                  className="px-4 p-2 ml-2 bg-neutral-100 text-black-500 text-xs cursor-pointer transform transition duration-200 hover:bg-green-500 hover:text-white hover:-translate-y-1 hover:shadow-sm hover:rounded"
                   disabled={submitting}
                   onClick={form.submit}
                   type="button"
                 >
-                  Save
+                  <SaveIcon />
                 </button>
                 <button
-                  className="p-2 ml-2 bg-neutral-100 text-black-500 text-xs cursor-pointer transform transition duration-200 hover:-translate-y-1 hover:shadow-sm hover:rounded"
+                  className="p-2 ml-2 bg-neutral-100 text-black-500 text-xs cursor-pointer transform transition duration-200 hover:bg-red-500 hover:text-white hover:-translate-y-1 hover:shadow-sm"
                   disabled={submitting || pristine}
                   onClick={() => form.reset()}
                   type="button"
@@ -148,9 +154,9 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                     <div>
                       <Field name={`${name}.name`} component="input" placeholder="Table Name">
                         {({ input, meta }) => (
-                          <div className="hover:border-gray-400 hover:border-solid border-2">
+                          <div className="hover:border-gray-400 hover:border-solid border-2 hover:rounded">
                             <input {...input} className="w-full p-1 font-bold text-sm" type="text" placeholder="Table Name" />
-                            {!input.value && <div className="bg-white text-xs text-gray-400">Table Name</div>}
+                            {/* {!input.value && <div className="bg-white text-xs text-gray-400">table name</div>} */}
                             {meta.error && <span className={`text-xs text-purple-500`}>⚠️&nbsp;{meta.error}</span>}
                           </div>
                         )}
@@ -167,9 +173,9 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                     placeholder="Type"
                                   >
                                     {({ input }) => (
-                                      <div className="hover:border-solid border-2 hover:border-gray-400">
+                                      <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
                                         <input {...input} placeholder="Type" className="text-sm border-none" />
-                                        {<div className="bg-white text-xs text-gray-400 border-none">Column Type</div>}
+                                        <div className="text-xs text-gray-400 border-none">column type</div>
                                       </div>
                                     )}
                                   </Field>
@@ -179,9 +185,9 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                     placeholder="Name"
                                   >
                                     {({ input }) => (
-                                      <div className="hover:border-solid border-2 hover:border-gray-400">
+                                      <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
                                         <input {...input} placeholder="Name" className="text-sm"/>
-                                        <div className="bg-white text-xs text-gray-400 border-none">Column Name</div>
+                                        <div className="text-xs text-gray-400 border-none">column name</div>
                                       </div>
                                     )}
                                   </Field>
@@ -190,13 +196,13 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                                     component="select"
                                   >
                                     {({ input }) => (
-                                      <div className="hover:border-solid border-2 hover:border-gray-400">
+                                      <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
                                         <select {...input} className="text-sm" >
                                           <option value=""></option>
                                           <option value="PK">PK</option>
                                           <option value="FK">FK</option>
                                         </select>
-                                        <div className="bg-white text-xs text-gray-400">Key</div>
+                                        <div className="text-xs text-gray-400">key</div>
                                       </div>
                                     )}
                                   </Field>
