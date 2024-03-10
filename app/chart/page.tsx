@@ -23,10 +23,10 @@ const HomePage = () => {
   return (
     <AppContext.Provider value={contextValue}>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <div style={{ width: '60%' }}>
+        <div style={{ width: '50%' }}>
           <MermaidDiagram chart={chart} />
         </div>
-        <div style={{ width: '40%' }}>
+        <div style={{ width: '50%' }}>
           <ERDEditorForm onChange={handleFormChange} onSubmit={handleFormSubmit} />
         </div>
       </div>
