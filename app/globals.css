@@ -21,25 +21,3 @@ body {
 .mermaid {
   height: 100vh;
 }
-
-.new-table, .new-column {
-  display: block;
-}
-
-.new-column {
-  width: 100%;
-}
-
-.table-form-group {
-  display: flex;
-}
-
-.table-form-group-fields {
-  margin: 1rem;
-  border: 1px solid white;
-}
-
-.column-form-group {
-  display: flex;
-  /* grid-template-columns: repeat(3, 2fr); */
-}

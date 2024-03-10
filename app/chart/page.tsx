@@ -37,7 +37,7 @@ const HomePage = () => {
 
   return (
     <AppContext.Provider value={contextValue}>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div className="flex">
         <div style={{ width: `${leftWidth}%` }}>
           
           <MermaidDiagram chart={chart} />

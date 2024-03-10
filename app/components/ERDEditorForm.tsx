@@ -1,6 +1,7 @@
 import {
   filter,
   forEach,
+  get,
   includes,
   isEmpty,
   map,
@@ -10,6 +11,13 @@ import React from 'react'
 import { Form, Field, FormSpy } from 'react-final-form'
 import { FieldArray } from 'react-final-form-arrays'
 import arrayMutators from 'final-form-arrays'
+
+
+const XIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+  </svg>
+)
 
 interface FormData {
   tables: Array<any>
@@ -29,8 +37,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
     const { tables, title, relationships } = values
     const reName = /^\w+$/
 
-    if (isEmpty(title)) {
-      set(errors, 'title', 'Title must not be empty.')
+    if (isEmpty(title) && isEmpty(tables)) {
+      set(errors, 'title', 'Please enter a title to begin.')
+    }
+
+    if (isEmpty(title) && !isEmpty(tables)) {
+      set(errors, 'title', 'Title cannot be empty.')
     }
 
     forEach(tables, (table, tableIndex) => {
@@ -86,12 +98,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
       mutators={{ ...arrayMutators }}
       validate={validate}
       render={({ handleSubmit, form, submitting, pristine, values }) => (
-        <form className="border-solid border-white-100 p-5" onSubmit={handleSubmit}>
+        <form className="p-5 overflow-x-auto" onSubmit={handleSubmit}>
           <Field name="title">
             {({ input, meta }) => (
               <div>
-                <input {...input} type="text" placeholder="Diagram Name" />
-                {meta.error && meta.touched && <span className="text-red-500">{meta.error}</span>}
+                <input {...input} className="p-2" type="text" placeholder="Diagram Name" />
+                {meta.error && <span className="text-sm text-purple-500">{meta.error}</span>}
               </div>
             )}
           </Field>
@@ -99,13 +111,13 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
             {({ fields }) => (
               <>
                 {fields.map((name, index) => (
-                  <div key={name} className="table-form-group">
-                    <div className="table-form-group-fields">
+                  <div key={name} className="d-block flex my-2 ">
+                    <div>
                       <Field name={`${name}.name`} component="input" placeholder="Table Name">
                         {({ input, meta }) => (
                           <div>
-                            <input {...input} className="w-full" type="text" placeholder="Table Name" />
-                            {meta.error && meta.touched && <span className="text-red-500">{meta.error}</span>}
+                            <input {...input} className="w-full p-1" type="text" placeholder="Table Name" />
+                            {meta.error && <span className="text-sm text-red-500">{meta.error}</span>}
                           </div>
                         )}
                       </Field>
@@ -114,29 +126,29 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                           <>
                             {fields.map((name, index) => (
                               <>
-                                <div key={name} className="column-form-group">
-                                  <Field name={`${name}.type`} component="input" placeholder="Type" />
-                                  <Field name={`${name}.name`} component="input" placeholder="Name" />
-                                  <Field name={`${name}.keyType`} component="select">
+                                <div key={name} className="flex">
+                                  <Field className="flex-1" name={`${name}.type`} component="input" placeholder="Type" />
+                                  <Field className="flex-1" name={`${name}.name`} component="input" placeholder="Name" />
+                                  <Field className="flex-1" name={`${name}.keyType`} component="select">
                                       <option value="">🔑</option>
                                       <option value="PK">🔑 PK</option>
                                       <option value="FK">🔑 FK</option>
                                   </Field>
                                   <button
-                                    className="d-block px-8 py-2 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                                    className="flex-initial p-2 font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
                                     type="button"
                                     onClick={() => fields.remove(index)}
                                   >
-                                    x
+                                    <XIcon aria-hidden="true" />
                                   </button>
                                 </div>
                                 <div>
-                                  {meta.error && map(meta.error[index], (error, key) => <div key={key} className="text-red-500">{error}</div>)}
+                                  {get(meta.error, index) && map(meta.error[index], (error, key) => <div key={key} className="text-sm text-red-500">{error}</div>)}
                                 </div>
                               </>
                             ))}
                             <button
-                              className="d-block w-full px-8 py-2 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                              className="w-full p-2 font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
                               type="button"
                               onClick={() => fields.push({ name: '', type: '' })}
                             >
@@ -147,16 +159,16 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                       </FieldArray>
                     </div>
                     <button
-                      className="d-block px-8 py-2 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                      className="p-4 font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
                       type="button"
                       onClick={() => fields.remove(index)}
                     >
-                      x
+                      <XIcon aria-hidden="true" />
                     </button>
                   </div>
                 ))}
                 <button
-                  className="d-block px-8 py-2 text-grey font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
+                  className="w-full p-2 font-bold transition duration-200 hover:bg-white hover:text-black border-transparent"
                   type="button"
                   onClick={() => fields.push({ name: '', columns: [] })}
                 >
@@ -166,14 +178,14 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
             )}
           </FieldArray>
           <FormSpy onChange={onFormChange} />
-          <div className="buttons">
+          <div className="my-2">
             <button
               className="px-4 py-2 border border-neutral-300 bg-neutral-100 text-neutral-500 text-sm hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
               disabled={submitting}
               onClick={form.submit}
               type="button"
             >
-              Submit
+              Save
             </button>
             <button
               className="px-4 py-2 ml-2 border border-neutral-300 bg-neutral-100 text-neutral-500 text-sm hover:-translate-y-1 transform transition duration-200 hover:shadow-md"
