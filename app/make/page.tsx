@@ -8,7 +8,11 @@ const defaultContextValue = {}
 const AppContext = createContext(defaultContextValue)
 
 const HomePage = () => {
-  const defaultSavedData = JSON.parse(localStorage.getItem('locally-saved-copy') || '{}')
+  let defaultSavedData = {}
+  if (typeof window !== 'undefined') {
+    defaultSavedData = JSON.parse(localStorage.getItem('locally-saved-copy') || '{}')
+  }
+  
   const [data, setData] = useState(null)
   const [savedData, setSavedData] = useState(defaultSavedData)
   const [chart, setChart] = useState('')
@@ -19,12 +23,16 @@ const HomePage = () => {
   }
 
   const handleFormSubmit = (formData: any) => {
-    localStorage.setItem('locally-saved-copy', JSON.stringify(formData))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('locally-saved-copy', JSON.stringify(formData))
+    }
     setSavedData(formData)
   }
 
   const handleReset = () => {
-    localStorage.removeItem('locally-saved-copy')
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('locally-saved-copy')
+    }
   }
 
   const handleMouseDown = (event: any) => {
