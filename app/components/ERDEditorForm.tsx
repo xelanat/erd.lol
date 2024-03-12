@@ -73,6 +73,22 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
         }
       })
     })
+
+    forEach(relationships, (relationship, relationshipIndex) => {
+      const { from, fromConnector, to, toConnector, verb } = relationship
+      if (!(from || '').match(reName)) {
+        set(errors, `relationship[${relationshipIndex}].from`, 'Empty "from" table.')
+      }
+      if (verb && !(verb || '').match(reName)) {
+        set(errors, `relationship[${relationshipIndex}].verb`, 'Invalid verb for relationship.')
+      }
+      if (!(to || '').match(reName)) {
+        set(errors, `relationship[${relationshipIndex}].to`, 'Empty "to" table.')
+      }
+    })
+
+    console.log(errors)
+
     return errors
   }
 
@@ -94,12 +110,22 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
         ).join(' ') +
         ' }'
     ).join(' ')
-    return `${header} ${tablesBody}`.trim()
+    const relationshipBody = map(
+      relationships,
+      (relationship: any) => {
+        const { from, fromConnector, to, toConnector, verb } = relationship
+        const [defaultFromConnector, defaultToConnector, defaultVerb] = ['||', '||', '""']
+        return `${from} ${fromConnector || defaultFromConnector}--${toConnector || defaultToConnector} ${to} : ${verb || defaultVerb}`
+      }
+    ).join(' ')
+
+    return `${header} ${tablesBody} ${relationshipBody}`.trim()
   }
 
   const onFormChange = (data: any) => {
     const { errors, values } = data
     if (isEmpty(errors)) {
+      console.log(toMermaid(values))
       onChange(toMermaid(values))
     }
   }
@@ -114,10 +140,10 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
       mutators={{ ...arrayMutators }}
       validate={validate}
       render={({ handleSubmit, form, submitting, pristine, values }) => (
-        <form className="px-2 py-4 overflow-x-auto" onSubmit={handleSubmit}>
+        <form className="py-4 overflow-x-auto" onSubmit={handleSubmit}>
           <Field name="title">
             {({ input, meta }) => (
-              <div className="flex justify-start my-2">
+              <div className="flex justify-start m-2">
                 <div>
                   <input
                     {...input}
@@ -146,11 +172,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
               </div>
             )}
           </Field>
+          <div className="my-4 h-1 bg-gray-200" />
           <FieldArray name="tables">
             {({ fields }) => (
-              <>
+              <div className="m-2">
                 {fields.map((name, index) => (
-                  <div key={name} className="d-block flex my-2 ">
+                  <div key={name} className="d-block flex my-2">
                     <div>
                       <Field name={`${name}.name`} component="input" placeholder="Table Name">
                         {({ input, meta }) => (
@@ -251,9 +278,104 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                 >
                   New Table
                 </button>
-              </>
+              </div>
             )}
           </FieldArray>
+          <div className="my-4 h-1 bg-gray-200" />
+          <div>
+          {
+            get(values.tables, 0)?.name &&
+            <div className="m-2">
+              <FieldArray name="relationships">
+                {({ fields, meta }) => (
+                  <>
+                    {fields.map((name, index) => (
+                      <div key={index}>
+                        <div className="flex">
+                          <Field name={`${name}.from`} component="select">
+                            {({ input }) => (
+                              <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
+                                <select {...input} className="text-sm" >
+                                  <option value=""></option>
+                                  {map(values.tables, (table) => <option value={table.name}>{table.name}</option>)}
+                                </select>
+                                <div className="text-xs text-gray-400">from</div>
+                              </div>
+                            )}
+                          </Field>
+                          <Field name={`${name}.fromConnector`} component="select">
+                          {({ input }) => (
+                              <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
+                                <select {...input} className="text-sm" >
+                                  <option value=""></option>
+                                  <option value="||">one and only one</option>
+                                  <option value="|o">zero or one</option>
+                                  <option value="}|">one or many</option>
+                                  <option value="}o">zero or many</option>
+                                </select>
+                                <div className="text-xs text-gray-400">from connector</div>
+                              </div>
+                            )}
+                          </Field>
+                          <Field
+                            name={`${name}.verb`}
+                            component="input"
+                          >
+                            {({ input }) => (
+                              <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
+                                <input {...input} placeholder="Has" className="text-sm border-none" />
+                                <div className="text-xs text-gray-400 border-none">verb</div>
+                              </div>
+                            )}
+                          </Field>
+                          <Field name={`${name}.toConnector`} component="select">
+                          {({ input }) => (
+                              <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
+                                <select {...input} className="text-sm" >
+                                  <option value=""></option>
+                                  <option value="||">one and only one</option>
+                                  <option value="o|">zero or one</option>
+                                  <option value="|{">one or many</option>
+                                  <option value="o{">zero or many</option>
+                                </select>
+                                <div className="text-xs text-gray-400">to connector</div>
+                              </div>
+                            )}
+                          </Field>
+                          <Field name={`${name}.to`} component="select">
+                            {({ input }) => (
+                              <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
+                                <select {...input} className="text-sm" >
+                                  <option value=""></option>
+                                  {map(values.tables, (table) => <option value={table.name}>{table.name}</option>)}
+                                </select>
+                                <div className="text-xs text-gray-400">to</div>
+                              </div>
+                            )}
+                          </Field>
+                          <button
+                            className="p-4 text-xs transition duration-200 hover:bg-white hover:text-black"
+                            type="button"
+                            onClick={() => fields.remove(index)}
+                          >
+                            <XIcon aria-hidden="true" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      className="w-full p-2 font-bold text-xs text-gray-500 transition duration-200 hover:bg-white hover:text-black"
+                      type="button"
+                      onClick={() => fields.push({ from: '', fromConnector: '', to: '', toConnector: '' })}
+                    >
+                      New Relationship
+                    </button>
+                  </>
+                )}
+              </FieldArray>
+            </div>
+          }
+          </div>
           <FormSpy onChange={onFormChange} />
         </form>
       )}
