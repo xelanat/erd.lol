@@ -37,11 +37,13 @@ interface FormData {
 }
 
 interface ERDEditorFormProps {
-  onChange: (data: any) => void
+  savedData: Object
+  onChange: (erdSyntax: any) => void
   onSubmit: (data: any) => void
+  onReset: () => void
 }
 
-const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => {
+const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSubmit, onReset }) => {
   const validate = (values: FormData) => {
     const errors: Partial<FormData> = {}
     const { tables, title, relationships } = values
@@ -87,8 +89,6 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
       }
     })
 
-    console.log(errors)
-
     return errors
   }
 
@@ -125,21 +125,20 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
   const onFormChange = (data: any) => {
     const { errors, values } = data
     if (isEmpty(errors)) {
-      console.log(toMermaid(values))
       onChange(toMermaid(values))
     }
   }
 
   // Initial form values for react-final-form
-  const initialValues = { title: uniqueNamesGenerator(config) }
+  const initialValues = isEmpty(savedData) ? { title: uniqueNamesGenerator(config) } : savedData
 
   return (
     <Form
       initialValues={initialValues}
-      onSubmit={() => {}}
+      onSubmit={onSubmit}
       mutators={{ ...arrayMutators }}
       validate={validate}
-      render={({ handleSubmit, form, submitting, pristine, values }) => (
+      render={({ handleSubmit, form, submitting, values }) => (
         <form className="py-4 overflow-x-auto" onSubmit={handleSubmit}>
           <Field name="title">
             {({ input, meta }) => (
@@ -163,8 +162,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                 </button>
                 <button
                   className="p-2 ml-2 bg-neutral-100 text-black-500 text-xs cursor-pointer transform transition duration-200 hover:bg-red-500 hover:text-white hover:-translate-y-1 hover:shadow-sm"
-                  disabled={submitting || pristine}
-                  onClick={() => form.reset()}
+                  disabled={submitting}
+                  onClick={() => {
+                      form.reset({})
+                      onReset()
+                      window.location.href = window.location.href
+                  }}
                   type="button"
                 >
                   Reset
@@ -297,7 +300,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                               <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
                                 <select {...input} className="text-sm" >
                                   <option value=""></option>
-                                  {map(values.tables, (table) => <option value={table.name}>{table.name}</option>)}
+                                  {map(values.tables, (table) => <option key={table.name} value={table.name}>{table.name}</option>)}
                                 </select>
                                 <div className="text-xs text-gray-400">from</div>
                               </div>
@@ -347,7 +350,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ onChange, onSubmit }) => 
                               <div className="border-transparent border-2 hover:border-gray-400 hover:rounded">
                                 <select {...input} className="text-sm" >
                                   <option value=""></option>
-                                  {map(values.tables, (table) => <option value={table.name}>{table.name}</option>)}
+                                  {map(values.tables, (table) => <option key={table.name} value={table.name}>{table.name}</option>)}
                                 </select>
                                 <div className="text-xs text-gray-400">to</div>
                               </div>
