@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'erd.lol',
-  description: 'Create ERD diagrams with ease 🤭',
+  description: 'Create ER diagrams with ease 🤭',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

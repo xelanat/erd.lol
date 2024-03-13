@@ -24,4 +24,4 @@ If you encounter any issues or have suggestions for improvements, please file an
 
 ### License
 
-QuickERD is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute it as per the license terms.
+Released under the [MIT License](LICENSE). Feel free to use, modify, and distribute it as per the license terms.
