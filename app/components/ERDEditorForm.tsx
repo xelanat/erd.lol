@@ -5,30 +5,14 @@ import { Form, Field, FormSpy } from 'react-final-form'
 import { FieldArray } from 'react-final-form-arrays'
 import { adjectives, animals, colors, Config, uniqueNamesGenerator } from 'unique-names-generator'
 
+import SaveIcon from '../icons/SaveIcon'
+import XIcon from '../icons/XIcon'
+
 const config: Config = {
   dictionaries: [adjectives, colors, animals],
   separator: '-',
-  seed: `mermaid diagrams are quite awesome ${Date.now()}`,
+  seed: Date.now(),
 }
-
-const XIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1}
-    stroke="currentColor"
-    className="w-6 h-6"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-  </svg>
-)
-
-const SaveIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 inline">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
-  </svg>
-)
 
 interface FormData {
   tables: Array<any>
