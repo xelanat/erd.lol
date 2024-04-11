@@ -148,7 +148,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({
       mutators={{ ...arrayMutators }}
       validate={validate}
       render={({ handleSubmit, form, submitting, values }) => (
-        <form className="py-4 overflow-x-auto" onSubmit={handleSubmit}>
+        <form className="pt-4 overflow-x-auto" onSubmit={handleSubmit}>
           <Field name="title">
             {({ input, meta }) => (
               <div className="flex justify-start m-2">
