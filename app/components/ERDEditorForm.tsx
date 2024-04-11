@@ -5,6 +5,7 @@ import { Form, Field, FormSpy } from 'react-final-form'
 import { FieldArray } from 'react-final-form-arrays'
 import { adjectives, animals, colors, Config, uniqueNamesGenerator } from 'unique-names-generator'
 
+import CopyIcon from '../icons/CopyIcon'
 import SaveIcon from '../icons/SaveIcon'
 import XIcon from '../icons/XIcon'
 
@@ -21,13 +22,20 @@ interface FormData {
 }
 
 interface ERDEditorFormProps {
+  chart: string
   savedData: Object
   onChange: (erdSyntax: any) => void
   onSubmit: (data: any) => void
   onReset: () => void
 }
 
-const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSubmit, onReset }) => {
+const ERDEditorForm: React.FC<ERDEditorFormProps> = ({
+  chart,
+  onChange,
+  onReset,
+  onSubmit,
+  savedData,
+}) => {
   const validate = (values: FormData) => {
     const errors: Partial<FormData> = {}
     const { tables, title, relationships } = values
@@ -96,7 +104,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
 
     // Define diagram title and type
     const titleHeader = title ? `---\ntitle: ${title}\n---\n` : ''
-    const header = `${titleHeader}erDiagram\n`
+    const header = `${titleHeader}erDiagram`
 
     // Write tables
     const { tables, relationships } = values
@@ -108,7 +116,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
           filter([column.type, column.name, column.keyType], (item: any) => item).join(' ')
         ).join(' ') +
         ' }'
-    ).join(' ')
+    ).join('\n')
     const relationshipBody = map(
       relationships,
       (relationship: any) => {
@@ -116,9 +124,9 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
         const defaultVerb = '""'
         return `${from} ${fromConnector}--${toConnector} ${to} : ${verb || defaultVerb}`
       }
-    ).join(' ')
+    ).join('\n')
 
-    return `${header} ${tablesBody} ${relationshipBody}`.trim()
+    return `${header}\n\n${tablesBody}\n${relationshipBody}`.trim()
   }
 
   const onFormChange = (form: any) => {
@@ -384,6 +392,27 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
               </FieldArray>
             </div>
           }
+          <div className="w-full p-2 text-sm font-bold text-gray-500 bg-neutral-100">
+            <span className="flex justify-between">
+              Mermaid Syntax Output
+              <button
+                className="transition duration-200 hover:bg-white hover:text-black"
+                type="button"
+                onClick={
+                  async () => {
+                    try {
+                      await navigator.clipboard.writeText(chart)
+                    } catch (err) {
+                      console.error('Failed to copy: ', err)
+                    }
+                  }                
+                }
+              >
+                <CopyIcon aria-hidden="true" />
+              </button>
+            </span>
+          </div>
+          <textarea className="w-full p-2 text-xs text-gray-500 focus:outline-none cursor-default resize-none" readOnly rows={8} value={chart} />
           </div>
           <FormSpy subscription={{ values: true }} onChange={() => onFormChange(form)} />
         </form>

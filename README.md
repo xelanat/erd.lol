@@ -7,8 +7,8 @@
 - [x] **Reactive form**: Dead-simple editor built to support any reasonable number of tables, columns, and relationships. (March 9th, 2024)
 - [x] **Preview**: Every keystroke updates the Mermaid live preview. (March 9th, 2024)
 - [x] **Save to browser**: Auto-save one diagram with in-browser storage.
+- [x] **Export Mermaid syntax**: Copy the Mermaid syntax for usage within documents and integrations.
 - [ ] **Color and formatting**: Enable style editing.
-- [ ] **Export Mermaid syntax**: Copy the Mermaid syntax for usage within documents and integrations.
 - [ ] **Export**: Export your diagrams to PNG and PDF for presentations and documents.
 - [ ] **Account**: Create the concept of an account.
 - [ ] **Save to account**: Persist diagrams within an account.

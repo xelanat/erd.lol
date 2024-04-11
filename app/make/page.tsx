@@ -61,7 +61,13 @@ const HomePage = () => {
         </div>
         <div className="w-1 bg-gray-200 cursor-col-resize" onMouseDown={(event) => handleMouseDown(event)} />
         <div className="right-panel" style={{ width: `${100 - leftWidth}%` }}>
-          <ERDEditorForm savedData={savedData} onChange={handleFormChange} onSubmit={handleFormSubmit} onReset={handleReset} />
+          <ERDEditorForm
+            chart={chart}
+            onChange={handleFormChange}
+            onReset={handleReset}
+            onSubmit={handleFormSubmit}
+            savedData={savedData}
+          />
         </div>
       </div>
     </AppContext.Provider>
