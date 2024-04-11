@@ -12,9 +12,18 @@ const LandingPage = () => (
       <section className="bg-white p-12 w-25 h-25">
         <h1 className="text-3xl text-black font-extrabold">erd.lol</h1>
         <div className="my-4 border-2 border-transparent text-black font-bold">Create entity-relationship diagrams with ease 🤭.</div>
-        <div className="mb-4 border-2 border-transparent text-black font-bold">Built with MermaidJS.</div>
+        <div className="mb-4 border-2 border-transparent text-black font-bold">
+          Built with&nbsp;
+            <Link
+            className="duration-200 text-purple-600 hover:text-purple-500"
+            href="https://mermaid.js.org/"
+          >
+            MermaidJS
+          </Link>
+          .
+        </div>
         <Link
-          className="bg-black p-2 rounded text-white transition duration-200 border-2 hover:border-black hover:border-dotted hover:bg-white hover:text-black font-bold"
+          className="bg-black p-2 rounded text-white transition duration-200 border-2 hover:border-black hover:bg-white hover:text-black font-bold"
           href="./make"
         >
           Diagram Away 🪄
