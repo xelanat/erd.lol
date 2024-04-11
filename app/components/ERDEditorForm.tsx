@@ -111,12 +111,12 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({
     const tablesBody = map(
       tables,
       (table: any) =>
-        `${table.name} { ` +
+        `${table.name} {\n` +
         map(table.columns, (column: any) =>
-          filter([column.type, column.name, column.keyType], (item: any) => item).join(' ')
-        ).join(' ') +
-        ' }'
-    ).join('\n')
+          '\t' + filter([column.type, column.name, column.keyType], (item: any) => item).join(' ')
+        ).join('\n') +
+        '\n}'
+    ).join('\n\n')
     const relationshipBody = map(
       relationships,
       (relationship: any) => {
@@ -126,7 +126,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({
       }
     ).join('\n')
 
-    return `${header}\n\n${tablesBody}\n${relationshipBody}`.trim()
+    return `${header}\n\n${tablesBody}\n\n${relationshipBody}`.trim()
   }
 
   const onFormChange = (form: any) => {
