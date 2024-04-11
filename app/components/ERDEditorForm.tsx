@@ -32,7 +32,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
     const errors: Partial<FormData> = {}
     const { tables, title, relationships } = values
     const reName = /^\w+$/
-    const connectors = ['||', '|o', '}|', '}o']
+    const connectors = ['||', '|o', 'o|', '}|', '|{', '}o', 'o{']
 
     if (isEmpty(title) && isEmpty(tables)) {
       set(errors, 'title', 'Please enter a title to begin.')
@@ -64,19 +64,19 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
     forEach(relationships, (relationship, relationshipIndex) => {
       const { from, fromConnector, to, toConnector, verb } = relationship
       if (!(from || '').match(reName)) {
-        set(errors, `relationship[${relationshipIndex}].from`, 'Empty "from" table.')
+        set(errors, `relationships[${relationshipIndex}].from`, 'Empty "from" table.')
       }
       if (!includes(connectors, fromConnector || '')) {
-        set(errors, `relationship[${relationshipIndex}].from`, 'Empty "from" connector.')
+        set(errors, `relationships[${relationshipIndex}].fromConnector`, 'Empty "from connector".')
       }
       if (verb && !(verb || '').match(reName)) {
-        set(errors, `relationship[${relationshipIndex}].verb`, 'Invalid verb for relationship.')
+        set(errors, `relationships[${relationshipIndex}].verb`, 'Invalid verb for relationship.')
       }
       if (!includes(connectors, toConnector || '')) {
-        set(errors, `relationship[${relationshipIndex}].from`, 'Empty "to" connector.')
+        set(errors, `relationships[${relationshipIndex}].toConnector`, 'Empty "to connector".')
       }
       if (!(to || '').match(reName)) {
-        set(errors, `relationship[${relationshipIndex}].to`, 'Empty "to" table.')
+        set(errors, `relationships[${relationshipIndex}].to`, 'Empty "to" table.')
       }
     })
 
@@ -136,6 +136,8 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
     if (relationships.length > newRelationships.length) {
       form.change('relationships', newRelationships)
     }
+    console.log(values.relationships)
+    console.log(errors.relationships)
     // Only update the Mermaid diagram if there is an absence of form errors.
     if (isEmpty(errors)) {
       onChange(toMermaid(values))
@@ -199,7 +201,6 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
                         {({ input, meta }) => (
                           <div className="hover:border-gray-400 hover:border-solid border-2 hover:rounded">
                             <input {...input} className="w-full p-1 font-bold text-sm" type="text" placeholder="Table Name" />
-                            {/* {!input.value && <div className="bg-white text-xs text-gray-400">table name</div>} */}
                             {meta.error && <span className={`text-xs text-purple-500`}>⚠️&nbsp;{meta.error}</span>}
                           </div>
                         )}
@@ -258,12 +259,11 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
                                   </button>
                                 </div>
                                 <div>
-                                  {get(meta.error, index) && 
-                                    map(meta.error[index], (error, key) => (
-                                      <div key={key} className={`text-xs text-purple-500`}>
-                                        ⚠️&nbsp;{error}
-                                      </div>
-                                    ))}
+                                  {get(meta.error, index) && map(meta.error[index], (error, key) => (
+                                    <div key={key} className={`text-xs text-purple-500`}>
+                                      ⚠️&nbsp;{error}
+                                    </div>
+                                  ))}
                                 </div>
                               </>
                             ))}
@@ -376,6 +376,13 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
                           >
                             <XIcon aria-hidden="true" />
                           </button>
+                        </div>
+                        <div>
+                          {get(meta.error, index) && map(meta.error[index], (error, key) => (
+                            <div key={key} className={`text-xs text-purple-500`}>
+                              ⚠️&nbsp;{error}
+                            </div>
+                          ))}
                         </div>
                       </div>
                     ))}
