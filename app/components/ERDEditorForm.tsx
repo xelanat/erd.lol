@@ -31,6 +31,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
   const validate = (values: FormData) => {
     const errors: Partial<FormData> = {}
     const { tables, title, relationships } = values
+    const tableNames = map(values.tables, table => table.name)
     const reName = /^\w+$/
     const connectors = ['||', '|o', 'o|', '}|', '|{', '}o', 'o{']
 
@@ -66,6 +67,9 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
       if (!(from || '').match(reName)) {
         set(errors, `relationships[${relationshipIndex}].from`, 'Empty "from" table.')
       }
+      if (!isEmpty(from) && !includes(tableNames, from)) {
+        set(errors, `relationships[${relationshipIndex}].from`, `"${from}" table no longer exists.`)
+      }
       if (!includes(connectors, fromConnector || '')) {
         set(errors, `relationships[${relationshipIndex}].fromConnector`, 'Empty "from connector".')
       }
@@ -77,6 +81,9 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
       }
       if (!(to || '').match(reName)) {
         set(errors, `relationships[${relationshipIndex}].to`, 'Empty "to" table.')
+      }
+      if (!isEmpty(to) && !includes(tableNames, to)) {
+        set(errors, `relationships[${relationshipIndex}].to`, `"${to}" table no longer exists.`)
       }
     })
 
@@ -116,28 +123,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
 
   const onFormChange = (form: any) => {
     const { errors, values } = form.getState()
-    const tableNames = map(values.tables, table => table.name)
-    const relationships = values.relationships || []
 
-    // Remove relationships containing tables that no longer exist
-    const newRelationships = filter(
-      relationships,
-      relationship => {
-        // When the relationship hasn't been fully defined yet, exempt the relationship from removal
-        if (isEmpty(relationship.from) || isEmpty(relationship.to)) {
-          return true
-        }
-        // If the relationship has been fully defined, validate the relationship against the existing tables
-        return includes(tableNames, relationship.from) && includes(tableNames, relationship.to)
-      },
-    )
-
-    // The filter operation could remove some or none of the relationships
-    if (relationships.length > newRelationships.length) {
-      form.change('relationships', newRelationships)
-    }
-    console.log(values.relationships)
-    console.log(errors.relationships)
     // Only update the Mermaid diagram if there is an absence of form errors.
     if (isEmpty(errors)) {
       onChange(toMermaid(values))
