@@ -1,5 +1,5 @@
 import arrayMutators from 'final-form-arrays'
-import { filter, forEach, get, includes, isEmpty, map, set } from 'lodash'
+import { every, filter, forEach, get, includes, isEmpty, map, set } from 'lodash'
 import React from 'react'
 import { Form, Field, FormSpy } from 'react-final-form'
 import { FieldArray } from 'react-final-form-arrays'
@@ -32,6 +32,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
     const errors: Partial<FormData> = {}
     const { tables, title, relationships } = values
     const reName = /^\w+$/
+    const connectors = ['||', '|o', '}|', '}o']
 
     if (isEmpty(title) && isEmpty(tables)) {
       set(errors, 'title', 'Please enter a title to begin.')
@@ -65,8 +66,14 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
       if (!(from || '').match(reName)) {
         set(errors, `relationship[${relationshipIndex}].from`, 'Empty "from" table.')
       }
+      if (!includes(connectors, fromConnector || '')) {
+        set(errors, `relationship[${relationshipIndex}].from`, 'Empty "from" connector.')
+      }
       if (verb && !(verb || '').match(reName)) {
         set(errors, `relationship[${relationshipIndex}].verb`, 'Invalid verb for relationship.')
+      }
+      if (!includes(connectors, toConnector || '')) {
+        set(errors, `relationship[${relationshipIndex}].from`, 'Empty "to" connector.')
       }
       if (!(to || '').match(reName)) {
         set(errors, `relationship[${relationshipIndex}].to`, 'Empty "to" table.')
@@ -79,6 +86,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
   const toMermaid = (values: any) => {
     const defaultMessage = 'your table here 😊'
     const title = isEmpty(values) ? defaultMessage : values.title
+
     // Define diagram title and type
     const titleHeader = title ? `---\ntitle: ${title}\n---\n` : ''
     const header = `${titleHeader}erDiagram\n`
@@ -98,16 +106,37 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
       relationships,
       (relationship: any) => {
         const { from, fromConnector, to, toConnector, verb } = relationship
-        const [defaultFromConnector, defaultToConnector, defaultVerb] = ['||', '||', '""']
-        return `${from} ${fromConnector || defaultFromConnector}--${toConnector || defaultToConnector} ${to} : ${verb || defaultVerb}`
+        const defaultVerb = '""'
+        return `${from} ${fromConnector}--${toConnector} ${to} : ${verb || defaultVerb}`
       }
     ).join(' ')
 
     return `${header} ${tablesBody} ${relationshipBody}`.trim()
   }
 
-  const onFormChange = (data: any) => {
-    const { errors, values } = data
+  const onFormChange = (form: any) => {
+    const { errors, values } = form.getState()
+    const tableNames = map(values.tables, table => table.name)
+    const relationships = values.relationships || []
+
+    // Remove relationships containing tables that no longer exist
+    const newRelationships = filter(
+      relationships,
+      relationship => {
+        // When the relationship hasn't been fully defined yet, exempt the relationship from removal
+        if (isEmpty(relationship.from) || isEmpty(relationship.to)) {
+          return true
+        }
+        // If the relationship has been fully defined, validate the relationship against the existing tables
+        return includes(tableNames, relationship.from) && includes(tableNames, relationship.to)
+      },
+    )
+
+    // The filter operation could remove some or none of the relationships
+    if (relationships.length > newRelationships.length) {
+      form.change('relationships', newRelationships)
+    }
+    // Only update the Mermaid diagram if there is an absence of form errors.
     if (isEmpty(errors)) {
       onChange(toMermaid(values))
     }
@@ -161,7 +190,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
           </Field>
           <div className="my-4 h-1 bg-gray-200" />
           <FieldArray name="tables">
-            {({ fields }) => (
+            {({ fields, meta }) => (
               <div className="m-2">
                 {fields.map((name, index) => (
                   <div key={name} className="d-block flex my-2">
@@ -363,7 +392,7 @@ const ERDEditorForm: React.FC<ERDEditorFormProps> = ({ savedData, onChange, onSu
             </div>
           }
           </div>
-          <FormSpy onChange={onFormChange} />
+          <FormSpy subscription={{ values: true }} onChange={() => onFormChange(form)} />
         </form>
       )}
     />
